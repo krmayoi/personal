@@ -1,14 +1,14 @@
 from data_fetcher import DataFetcher
 from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
-from config import DOW_JONES_URL, START_DATE, END_DATE
+from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR
 
 def main():
     # Step 1: Get Dow Jones tickers
     fetcher = DataFetcher().get_dow_jones_tickers(url=DOW_JONES_URL)
     print(f"✅ Found {len(fetcher.tickers)} tickers: {fetcher.tickers}")
 
-    # Step 2: Get historical market data
+    # Step 2: Get historical market data (training set)
     fetcher.get_market_data(start=START_DATE, end=END_DATE)
     print(f"✅ Got returns for {len(fetcher.data)} tickers")
 
@@ -46,6 +46,18 @@ def main():
     headline_df = news_analyzer.fetch_all()
     print("\n📰 Headline Sentiment Data:")
     print(headline_df.head())
+
+    # Step 7: Average compound sentiment scores
+    avg_scores = news_analyzer.average_compound_scores().round(3)
+    print("\n📊 Average Compound Sentiment Scores:")
+    for ticker, score in avg_scores.items():
+        print(f"{ticker} | Average Compound Score = {score}")
+
+    # Step 8: Fetch prediction year data for forward testing
+    prediction_data = fetcher.get_yearly_returns(PREDICTION_YEAR)
+    print(f"\n📅 Prediction Year {PREDICTION_YEAR} Data:")
+    for ticker, df in prediction_data.items():
+        print(f"{ticker}: {len(df)} trading days, last date = {df.index.max().date()}")
 
 if __name__ == "__main__":
     main()
