@@ -31,6 +31,11 @@ SEC_HEADERS = {
 }
 
 # -----------------------------
+# SEC Filings Path
+# -----------------------------
+SEC_FILINGS_PATH = "data/raw/sec_filings"
+
+# -----------------------------
 # CIK Dictionary
 # -----------------------------
 CIK_dict = {
