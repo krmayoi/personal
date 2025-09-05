@@ -95,3 +95,19 @@ class NewsAnalyzer:
             if not df.empty:
                 all_data.append(df)
         return pd.concat(all_data, ignore_index=True) if all_data else pd.DataFrame()
+
+    def average_compound_scores(self):
+        """
+        Calculate the average compound sentiment score for each ticker
+        using all fetched headlines.
+
+        Returns
+        -------
+        pd.Series
+            Index: Ticker, Value: Average compound score
+        """
+        all_headlines = self.fetch_all()
+        if all_headlines.empty:
+            return pd.Series(dtype=float)
+
+        return all_headlines.groupby("Ticker")["Compound"].mean()
