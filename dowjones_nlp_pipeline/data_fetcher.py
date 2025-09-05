@@ -26,3 +26,27 @@ class DataFetcher:
 
         self.tickers = sorted(tickers)
         return self
+
+    def get_market_data(self, start=START_DATE, end=END_DATE):
+        import numpy as np
+        np.random.seed(1)
+
+        # Remove problematic ticker before fetching
+        if "DOW" in self.tickers:
+            self.tickers.remove("DOW")
+
+        stock_returns = {}
+        for ticker in self.tickers:
+            try:
+                dailyprc = yf.download(ticker, start, end, interval="1d", progress=False, threads=False)
+                if dailyprc.empty:
+                    print(f"⚠️ No data for {ticker}, skipping.")
+                    continue
+                dailyrets = dailyprc.pct_change().dropna()
+                stock_returns[ticker] = dailyrets
+                time.sleep(1)  # avoid hammering Yahoo
+            except Exception as e:
+                print(f"❌ Failed to fetch {ticker}: {e}")
+
+        self.data = stock_returns
+        return self
