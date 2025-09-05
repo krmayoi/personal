@@ -35,5 +35,10 @@ def main():
     print("\n📈 Backtest Results (Out-of-Sample):")
     print(backtest_df.to_string(index=False))
 
+    # Step 5: Value at Risk (VaR) analysis
+    var_df = analyzer.var_analysis()
+    print("\n📉 Value at Risk Analysis (Equal-Weighted Portfolio):")
+    print(var_df)
+
 if __name__ == "__main__":
     main()
