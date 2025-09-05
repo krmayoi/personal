@@ -17,7 +17,7 @@ def main():
         print(f"\n📈 Sample data for {first_ticker}:")
         print(fetcher.data[first_ticker].head())
 
-    # Step 3: Run portfolio analysis
+    # Step 3: Run portfolio analysis (in-sample)
     analyzer = PortfolioAnalyzer(
         tickers=fetcher.tickers,
         start_date=START_DATE,
@@ -25,11 +25,15 @@ def main():
     )
     analyzer.fetch_prices().run_overlapping_simulations()
 
-    # Step 4: Show portfolio analysis results
-    print("\n📊 Portfolio Analysis Results:")
+    print("\n📊 Portfolio Analysis Results (In-Sample):")
     for period, data in analyzer.results.items():
         print(f"\nPeriod: {period}")
         print(data['DF'].head())
+
+    # Step 4: Backtest Max Sharpe portfolio (out-of-sample)
+    backtest_df = analyzer.backtest_max_sharpe()
+    print("\n📈 Backtest Results (Out-of-Sample):")
+    print(backtest_df.to_string(index=False))
 
 if __name__ == "__main__":
     main()
