@@ -17,3 +17,8 @@ END_DATE = date(2023, 12, 31)
 # -----------------------------
 RAW_DATA_PATH = "data/raw/"
 PROCESSED_DATA_PATH = "data/processed/"
+
+# -----------------------------
+# Prediction Year
+# -----------------------------
+PREDICTION_YEAR = 2024
