@@ -1,5 +1,6 @@
 from data_fetcher import DataFetcher
 from portfolio_analysis import PortfolioAnalyzer
+from news_analysis import NewsAnalyzer
 from config import DOW_JONES_URL, START_DATE, END_DATE
 
 def main():
@@ -39,6 +40,12 @@ def main():
     var_df = analyzer.var_analysis()
     print("\n📉 Value at Risk Analysis (Equal-Weighted Portfolio):")
     print(var_df)
+
+    # Step 6: Headline sentiment analysis
+    news_analyzer = NewsAnalyzer(fetcher.tickers)
+    headline_df = news_analyzer.fetch_all()
+    print("\n📰 Headline Sentiment Data:")
+    print(headline_df.head())
 
 if __name__ == "__main__":
     main()
