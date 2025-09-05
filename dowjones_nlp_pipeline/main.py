@@ -2,6 +2,7 @@ from data_fetcher import DataFetcher
 from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
 from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR
+from sec_data_fetcher import SECDataFetcher
 
 def main():
     # Step 1: Get Dow Jones tickers
@@ -58,6 +59,11 @@ def main():
     print(f"\n📅 Prediction Year {PREDICTION_YEAR} Data:")
     for ticker, df in prediction_data.items():
         print(f"{ticker}: {len(df)} trading days, last date = {df.index.max().date()}")
+
+    # Step 9: Fetch 10-K filings for 2020
+    sec_fetcher = SECDataFetcher(year=2020).get_master_index(form_type="10-K")
+    print(f"\n📄 Found {len(sec_fetcher.data)} 10-K filings in {sec_fetcher.year}")
+    print(sec_fetcher.data.head())
 
 if __name__ == "__main__":
     main()
