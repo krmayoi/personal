@@ -157,4 +157,3 @@ class PortfolioAnalyzer:
             })
 
         return pd.DataFrame(results)
-
