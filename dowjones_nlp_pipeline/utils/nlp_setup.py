@@ -1,8 +1,13 @@
-import nltk
+# utils/nlp_setup.py
+from nltk.corpus import cmudict, stopwords
+from nltk.stem import WordNetLemmatizer
 
-nltk.download('omw-1.4')
-nltk.download('vader_lexicon')
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('cmudict')
+# Load CMU Pronouncing Dictionary
+d = cmudict.dict()
+
+# Load stopwords
+stop_words = set(stopwords.words('english'))
+
+# Initialize lemmatizer
+lemma = WordNetLemmatizer()
+
