@@ -27,7 +27,7 @@ def get_prices_after_filing(tickers, tenk_df):
         start_date = date_df.loc[date_df['Ticker'] == ticker, 'Date'].iloc[0] + pd.DateOffset(days=1)
         end_date = start_date + pd.DateOffset(days=DAYS_AFTER_FILING)
         try:
-            prices = yf.download(ticker, start=start_date, end=end_date)['Adj Close']
+            prices = yf.download(ticker, start=start_date, end=end_date)['Close']
             stock_prices_dict[ticker] = prices
         except Exception as e:
             print(f"⚠️ Failed to fetch prices for {ticker}: {e}")
