@@ -2,8 +2,9 @@ from data_fetcher import DataFetcher
 from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
 from sec_data_fetcher import SECDataFetcher
-from text_metrics import analyze_filings   # <-- new import
-from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR
+from text_metrics import analyze_filings
+from price_after_filing import get_prices_after_filing   # <-- new helper
+from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR, DAYS_AFTER_FILING
 import nltk
 
 
@@ -87,6 +88,12 @@ def main():
     print("\n📊 Textual Analysis Metrics:")
     print(metrics_df.sort_values(by="Uncertainty", ascending=False))
 
+    # Step 14: Get daily stock prices after 10-K filing
+    all_stock_prices = get_prices_after_filing(fetcher.tickers, sec_fetcher.data)
+    print(f"\n📈 Daily stock prices {DAYS_AFTER_FILING} days after 10-K filing:")
+    print(all_stock_prices.head(15))
+
 
 if __name__ == "__main__":
     main()
+
