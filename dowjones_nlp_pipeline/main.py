@@ -2,7 +2,9 @@ from data_fetcher import DataFetcher
 from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
 from sec_data_fetcher import SECDataFetcher
+from text_metrics import analyze_filings   # <-- new import
 from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR
+import nltk
 
 
 def main():
@@ -66,11 +68,6 @@ def main():
     print(f"\n📄 Found {len(sec_fetcher.data)} 10-K filings in {sec_fetcher.year}")
     print(sec_fetcher.data.head())
 
-        # Step 9: Fetch 10-K filings for 2020
-    sec_fetcher = SECDataFetcher(year=2020).get_master_index(form_type="10-K")
-    print(f"\n📄 Found {len(sec_fetcher.data)} 10-K filings in {sec_fetcher.year}")
-    print(sec_fetcher.data.head())
-
     # Step 10: Filter to Dow Jones companies
     sec_fetcher.filter_to_dow_jones()
 
@@ -81,6 +78,15 @@ def main():
 
     # Step 12: Download filings into data/raw/sec_filings/
     sec_fetcher.download_filings(url_df)
+
+    # Step 13: Run integrated text metrics (Uncertainty, Tone, FOG, Flesch)
+    nltk.download('cmudict')
+    pronouncing_dict = nltk.corpus.cmudict.dict()
+
+    metrics_df = analyze_filings(fetcher.tickers, pronouncing_dict)
+    print("\n📊 Textual Analysis Metrics:")
+    print(metrics_df.sort_values(by="Uncertainty", ascending=False))
+
 
 if __name__ == "__main__":
     main()
