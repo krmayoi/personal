@@ -3,7 +3,7 @@ from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
 from sec_data_fetcher import SECDataFetcher
 from text_metrics import analyze_filings
-from price_after_filing import get_prices_after_filing   # <-- new helper
+from price_after_filing import get_prices_after_filing, calculate_variance  # <-- now imports both
 from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR, DAYS_AFTER_FILING
 import nltk
 
@@ -88,10 +88,17 @@ def main():
     print("\n📊 Textual Analysis Metrics:")
     print(metrics_df.sort_values(by="Uncertainty", ascending=False))
 
-    # Step 14: Get daily stock prices after 10-K filing
+    # Step 14: Get daily stock prices after 10-K filing (Close prices)
     all_stock_prices = get_prices_after_filing(fetcher.tickers, sec_fetcher.data)
     print(f"\n📈 Daily stock prices {DAYS_AFTER_FILING} days after 10-K filing:")
     print(all_stock_prices.head(15))
+
+    # Step 15: Calculate volatility (variance) over that period
+    # Convert MultiIndex DataFrame to dict of Series
+    stock_prices_dict = {ticker: all_stock_prices.loc[ticker] for ticker in all_stock_prices.index.levels[0]}
+    variance_df = calculate_variance(stock_prices_dict)
+    print(f"\n📊 Variance of daily returns {DAYS_AFTER_FILING} days after filing:")
+    print(variance_df.sort_values(by="Variance", ascending=False))
 
 
 if __name__ == "__main__":
