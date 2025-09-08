@@ -3,9 +3,10 @@ from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
 from sec_data_fetcher import SECDataFetcher
 from text_metrics import analyze_filings
-from price_after_filing import get_prices_after_filing, calculate_variance  # <-- now imports both
+from price_after_filing import get_prices_after_filing, calculate_variance
 from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR, DAYS_AFTER_FILING
 import nltk
+import pandas as pd
 
 
 def main():
@@ -94,13 +95,24 @@ def main():
     print(all_stock_prices.head(15))
 
     # Step 15: Calculate volatility (variance) over that period
-    # Convert MultiIndex DataFrame to dict of Series
     stock_prices_dict = {ticker: all_stock_prices.loc[ticker] for ticker in all_stock_prices.index.levels[0]}
     variance_df = calculate_variance(stock_prices_dict)
     print(f"\n📊 Variance of daily returns {DAYS_AFTER_FILING} days after filing:")
     print(variance_df.sort_values(by="Variance", ascending=False))
 
+    # Step 16: Correlation between 10-K content metrics and variance
+    wordcontent_df = pd.merge(
+        metrics_df.set_index('Ticker'),
+        variance_df.set_index('Ticker'),
+        left_index=True,
+        right_index=True,
+        how='inner'
+    )
+    corr_mat = wordcontent_df[['Uncertainty', 'Tone', 'FOG', 'Readability', 'Variance']].corr()
+    variance_corr_df = pd.DataFrame(corr_mat['Variance'])
+    print("\n📊 Correlation of textual metrics with Variance:")
+    print(variance_corr_df)
+
 
 if __name__ == "__main__":
     main()
-
