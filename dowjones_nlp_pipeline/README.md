@@ -63,6 +63,7 @@ The next phase will extend this into **machine learning models** to predict mark
 ---
 
 ## 📂 Project Structure
+```
 . 
   ├── main.py # Orchestrates the full pipeline 
   ├── config.py # Centralized configuration 
@@ -76,6 +77,7 @@ The next phase will extend this into **machine learning models** to predict mark
   │ ├── processed/ # Cleaned datasets & metrics 
   │ └── reference/ # LM dictionaries 
   └── README.md # Project documentation
+```
 ---
 
 ## 🚀 How to Run
