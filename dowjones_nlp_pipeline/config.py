@@ -26,9 +26,7 @@ PREDICTION_YEAR = 2024
 # -----------------------------
 # SEC Header
 # -----------------------------
-SEC_HEADERS = {
-    'User-Agent': 'KRMayoi, krmayoi88@gmail.com'
-}
+SEC_HEADERS = {'User-Agent': 'Sean Kim (krmayoi88@gmail.com)'}
 
 # -----------------------------
 # SEC Filings Path
@@ -74,3 +72,4 @@ CIK_dict = {
 # Days After Filing 10-K
 # -----------------------------
 DAYS_AFTER_FILING = 60
+
