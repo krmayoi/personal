@@ -3,6 +3,7 @@ import pandas as pd
 import yfinance as yf
 from pandas_datareader import data as pdr
 from scipy.optimize import minimize
+from scipy.stats import norm
 
 class PortfolioAnalyzer:
     def __init__(self, tickers, start_date, end_date, num_simul=50000, max_weight=0.10):
@@ -113,10 +114,8 @@ class PortfolioAnalyzer:
             training_period = self.year_ranges[s]
             investment_period = self.year_ranges[s + lookahead]
 
-            # Previous weights from training period
             current_weights = self.results[training_period]['DF']['Max_SR_Act'].values
 
-            # Get next period's prices
             start_year_next, end_year_next = map(int, investment_period.split(":"))
             start_date_range_next = f"{start_year_next}-01-01"
             end_date_range_next = f"{end_year_next}-12-31"
@@ -137,7 +136,6 @@ class PortfolioAnalyzer:
 
             cumulative_returns_current = np.dot(relative_rets, current_weights)
 
-            # New Max Sharpe for next period
             tenyr_yield = pdr.DataReader('DGS10', 'fred', start_date_range_next, end_date_range_next).dropna()
             rf_next = tenyr_yield.iloc[0][0] / 100
             mu_vec_next = np.array(DJ_MonthlyReturns_next.mean() * 12)
@@ -157,3 +155,47 @@ class PortfolioAnalyzer:
             })
 
         return pd.DataFrame(results)
+
+    def var_analysis(self, days=30, portfolio_value=100):
+        """Calculate Parametric, Historical, and Monte Carlo VaR."""
+        if self.daily_prices is None:
+            raise ValueError("Prices not fetched yet. Call fetch_prices() first.")
+
+        N = len(self.tickers)
+        dailyprc = self.daily_prices
+
+        lnret = np.log(dailyprc / dailyprc.shift(1)).dropna()
+        ew = np.ones(N) / N
+        hist_ret_ew = (ew * lnret).sum(axis=1)
+        hist_mean = hist_ret_ew.mean()
+        hist_sd = hist_ret_ew.std()
+        hist_Nday_ret = hist_ret_ew.rolling(days).sum()
+        hist_Nday_ret_dollars = hist_Nday_ret * portfolio_value
+
+        Var_dict = {"Parametric": [], "Historical": [], "Monte Carlo": []}
+        threshold_levels = [0.1, 0.05, 0.01]
+
+        # Parametric
+        for i in threshold_levels:
+            z = norm.ppf(i)
+            Var = (hist_mean * days - abs(z) * hist_sd * np.sqrt(days)) * portfolio_value
+            Var_dict['Parametric'].append(Var)
+
+        # Historical
+        for i in threshold_levels:
+            Var = np.nanpercentile(hist_Nday_ret_dollars, i * 100)
+            Var_dict['Historical'].append(Var)
+
+        # Monte Carlo
+        np.random.seed(100)
+        numsims = 10000
+        simulated_values = np.zeros(numsims)
+        for i in range(numsims):
+            z = np.random.normal(0, 1)
+            Var = (hist_mean * days - abs(z) * hist_sd * np.sqrt(days)) * portfolio_value
+            simulated_values[i] = Var
+        for i in threshold_levels:
+            Var = np.nanpercentile(simulated_values, i * 100)
+            Var_dict['Monte Carlo'].append(Var)
+
+        return pd.DataFrame(Var_dict, index=threshold_levels)
