@@ -16,8 +16,15 @@ class SECDataFetcher:
             url = f"https://www.sec.gov/Archives/edgar/full-index/{self.year}/{Q}/master.idx"
             resp = requests.get(url, headers=SEC_HEADERS)
 
-            if resp.status_code == 200 and 'text/plain' in resp.headers.get('Content-Type', ''):
-                lines = resp.text.splitlines()
+            if resp.status_code == 200:
+                # Always try to decode as text, even if Content-Type is application/octet-stream
+                try:
+                    text = resp.text
+                except UnicodeDecodeError:
+                    # Fallback if .text fails
+                    text = resp.content.decode('latin-1', errors='ignore')
+
+                lines = text.splitlines()
 
                 # Find header row dynamically
                 header_idx = None
@@ -30,14 +37,14 @@ class SECDataFetcher:
                     print(f"⚠️ Could not find header in {Q}")
                     continue
 
-                data_lines = lines[header_idx+1:]
+                data_lines = lines[header_idx + 1:]
                 mydf = pd.DataFrame(
                     [row.split('|') for row in data_lines if row.strip()],
                     columns=lines[header_idx].split('|')
                 )
                 year_data.append(mydf)
             else:
-                print(f"⚠️ Skipping {Q} — got {resp.status_code} {resp.headers.get('Content-Type')}")
+                print(f"⚠️ Skipping {Q} — got HTTP {resp.status_code}")
 
             time.sleep(0.5)  # be nice to SEC
 
@@ -50,6 +57,7 @@ class SECDataFetcher:
             self.data = pd.DataFrame()
 
         return self
+
 
     def filter_to_dow_jones(self):
         """Filter the data to only include companies in CIK_dict."""
@@ -92,3 +100,4 @@ class SECDataFetcher:
             except Exception as e:
                 print(f"⚠️ Error downloading {ticker}: {e}")
             time.sleep(0.5)  # avoid hammering SEC
+
