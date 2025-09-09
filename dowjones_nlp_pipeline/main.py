@@ -3,11 +3,9 @@ from portfolio_analysis import PortfolioAnalyzer
 from news_analysis import NewsAnalyzer
 from sec_data_fetcher import SECDataFetcher
 from text_metrics import analyze_filings
-from price_after_filing import get_prices_after_filing, calculate_variance
 from config import DOW_JONES_URL, START_DATE, END_DATE, PREDICTION_YEAR, DAYS_AFTER_FILING
 import nltk
 import pandas as pd
-
 
 def main():
     # Step 1: Get Dow Jones tickers
@@ -85,34 +83,19 @@ def main():
     nltk.download('cmudict')
     pronouncing_dict = nltk.corpus.cmudict.dict()
 
-    metrics_df = analyze_filings(fetcher.tickers, pronouncing_dict)
+    import time
+
+    # Pick just 1–2 tickers to test
+    test_tickers = fetcher.tickers
+
+    start_total = time.time()
+    metrics_df = analyze_filings(test_tickers, pronouncing_dict)
+    print(metrics_df)
+
+    print(f"\n⏱ Total time for {len(test_tickers)} filings: {time.time() - start_total:.2f} seconds")
+
     print("\n📊 Textual Analysis Metrics:")
     print(metrics_df.sort_values(by="Uncertainty", ascending=False))
-
-    # Step 14: Get daily stock prices after 10-K filing (Close prices)
-    all_stock_prices = get_prices_after_filing(fetcher.tickers, sec_fetcher.data)
-    print(f"\n📈 Daily stock prices {DAYS_AFTER_FILING} days after 10-K filing:")
-    print(all_stock_prices.head(15))
-
-    # Step 15: Calculate volatility (variance) over that period
-    stock_prices_dict = {ticker: all_stock_prices.loc[ticker] for ticker in all_stock_prices.index.levels[0]}
-    variance_df = calculate_variance(stock_prices_dict)
-    print(f"\n📊 Variance of daily returns {DAYS_AFTER_FILING} days after filing:")
-    print(variance_df.sort_values(by="Variance", ascending=False))
-
-    # Step 16: Correlation between 10-K content metrics and variance
-    wordcontent_df = pd.merge(
-        metrics_df.set_index('Ticker'),
-        variance_df.set_index('Ticker'),
-        left_index=True,
-        right_index=True,
-        how='inner'
-    )
-    corr_mat = wordcontent_df[['Uncertainty', 'Tone', 'FOG', 'Readability', 'Variance']].corr()
-    variance_corr_df = pd.DataFrame(corr_mat['Variance'])
-    print("\n📊 Correlation of textual metrics with Variance:")
-    print(variance_corr_df)
-
 
 if __name__ == "__main__":
     main()
