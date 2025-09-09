@@ -5,6 +5,7 @@ import yfinance as yf
 import pandas as pd
 import time
 from datetime import date
+from config import DOW_JONES_URL, START_DATE, END_DATE
 
 class DataFetcher:
     def __init__(self):
