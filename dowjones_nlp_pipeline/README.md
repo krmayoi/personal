@@ -98,8 +98,8 @@ The next phase will extend this into **machine learning models** to predict mark
 4. Run the pipeline
    python main.py
 
-📜 License
+## 📜 License
 This project is for educational and portfolio purposes. Data sources are subject to their respective terms of use.
 
-👤 About Me
+## 👤 About Me
 KRMayoi - Data science & analytics enthusiast, focused on reproducible, modular pipelines and the intersection of NLP with financial markets.
