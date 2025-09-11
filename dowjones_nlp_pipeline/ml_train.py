@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, precision_score, mean_squared_error
 from feature_engineering import get_features_with_partner
 from data_splits import split_model_holdout
 from model_selection import ModelSelector
-from portfoliosim import simulate_long_short_portfolio
+from portfolio_sim import simulate_long_short_portfolio
 
 import config
 from config import BASE_TICKER
