@@ -73,3 +73,10 @@ CIK_dict = {
 # -----------------------------
 DAYS_AFTER_FILING = 60
 
+# -----------------------------
+# ML Stock and Date Choice
+# -----------------------------
+BASE_TICKER = "JPM"
+START_DATE = date(2010, 1, 1)
+END_DATE = date(2024, 12, 31)
+AUTO_ADJUST = False
