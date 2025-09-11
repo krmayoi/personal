@@ -37,6 +37,38 @@ The next phase will extend this into **machine learning models** to predict mark
 - Headline sentiment scoring using VADER
 - Aggregated compound sentiment per ticker
 
+### 5. Machine Learning Models
+- Feature engineering from both quantitative market data and partner-ticker correlations (`feature_engineering.py`)
+- Config-driven base ticker selection -- swap `BASE_TICKER` in `config.py` to train on any ticker
+- Automated model tuning with `RandomizedSearchCV` + `GridSearchCV` for:
+    - Decision Trees
+    - Random Forests
+    - Gradient Boosting
+- Model ranking by combined Accuracy, Precision, and scaled MSE
+- Portfolio simulation of ML predictions:
+    - Long-short strategy
+    - Buy-and-hold benchmark
+    - Summary stats: total return, annualized return/volatility, max drawdown
+  
+--- 
+
+## 🧠 ML Workflow
+
+1. Feature Engineering
+- Pulls base ticker + most correlated partner ticker
+- Generates rolling technical indicators, volume/price trends, and stochastic oscillators
+- Merges features into a single aligned dataset
+2. Train / Holdout Split
+- Date‑based or fraction‑based split via `split_model_holdout()`
+- Holdout period configurable in `ml_train.py` for forward‑testing
+3. Model Selection & Tuning
+- Hyperparameter search for each model
+- Best models stored in `selector.tuned_models`
+4. Evaluation & Simulation
+- Metrics on holdout set
+- Portfolio backtest with realistic frictions
+- Equity curve plots and performance summaries
+
 ---
 
 ## 🛠️ Tech Stack
@@ -65,18 +97,23 @@ The next phase will extend this into **machine learning models** to predict mark
 ## 📂 Project Structure
 ```
 . 
-  ├── main.py # Orchestrates the full pipeline 
-  ├── config.py # Centralized configuration 
-  ├── data_fetcher.py # Market data retrieval 
-  ├── portfolio_analysis.py # Portfolio simulation & risk metrics 
-  ├── news_analysis.py # Headline sentiment analysis 
-  ├── sec_data_fetcher.py # SEC filings retrieval & filtering 
-  ├── text_metrics.py # NLP metrics on 10-K filings 
+  ├── main.py                   # Orchestrates the full pipeline 
+  ├── config.py                 # Centralized configuration 
+  ├── data_fetcher.py           # Market data retrieval 
+  ├── portfolio_analysis.py     #  Portfolio simulation & risk metrics 
+  ├── news_analysis.py          # Headline sentiment analysis 
+  ├── sec_data_fetcher.py       # SEC filings retrieval & filtering 
+  ├── text_metrics.py           # NLP metrics on 10-K filings 
   ├── data/ 
-  │ ├── raw/ # Unprocessed data (filings, raw CSVs) 
-  │ ├── processed/ # Cleaned datasets & metrics 
-  │ └── reference/ # LM dictionaries 
-  └── README.md # Project documentation
+  │ ├── raw/                    # Unprocessed data (filings, raw CSVs) 
+  │ ├── processed/              # Cleaned datasets & metrics 
+  │ └── reference/              # LM dictionaries
+  ├── ml_train.py               # ML training, evaluation, and portfolio simulation
+  ├── feature_engineering.py    # Builds features from base + partner ticker
+  ├── data_splits.py            # Train/holdout split logic
+  ├── model_selection.py        # Model tuning, ranking, and export
+  ├── portfolio_sim.py          # Long-short and buy-hold simulation
+  └── README.md                 # Project documentation
 ```
 ---
 
@@ -94,6 +131,7 @@ The next phase will extend this into **machine learning models** to predict mark
   - Date ranges (START_DATE, END_DATE, PREDICTION_YEAR)
   - SEC filings path
   - Dow Jones tickers URL
+  - Base Ticker choice
 
 4. Run the pipeline
    python main.py
