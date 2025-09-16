@@ -10,6 +10,7 @@ import pandas as pd
 def main():
     # Step 1: Get Dow Jones tickers
     fetcher = DataFetcher().get_dow_jones_tickers(url=DOW_JONES_URL)
+    fetcher.save_tickers()  # saves to data/raw/djia_tickers.json
     print(f"✅ Found {len(fetcher.tickers)} tickers: {fetcher.tickers}")
 
     # Step 2: Get historical market data (training set)
