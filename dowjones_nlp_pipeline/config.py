@@ -10,7 +10,7 @@ DOW_JONES_URL = "https://bullishbears.com/dow-jones-stocks-list/"
 # Date Range Defaults
 # -----------------------------
 START_DATE = date(2010, 1, 1)
-END_DATE = date(2023, 12, 31)
+END_DATE = date(2024, 12, 31)
 
 # -----------------------------
 # File Paths
@@ -21,12 +21,12 @@ PROCESSED_DATA_PATH = "data/processed/"
 # -----------------------------
 # Prediction Year
 # -----------------------------
-PREDICTION_YEAR = 2024
+PREDICTION_YEAR = 2025
 
 # -----------------------------
 # SEC Header
 # -----------------------------
-SEC_HEADERS = {'User-Agent': 'Sean Kim (krmayoi88@gmail.com)'}
+SEC_HEADERS = {'User-Agent': 'KR Mayoi (krmayoi88@gmail.com)'}
 
 # -----------------------------
 # SEC Filings Path
