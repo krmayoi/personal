@@ -70,6 +70,14 @@ class DataFetcher:
 
         self.data = stock_returns
         return self
+    
+    def save_market_data(self, save_path="data/raw/djia_prices.pkl"):
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        try:
+            pd.to_pickle(self.data, save_path)
+            print(f"✅ Saved market data for {len(self.data)} tickers to {save_path}")
+        except Exception as e:
+            print(f"⚠️ Error saving market data: {e}")
 
     def get_yearly_returns(self, year, drop_tickers_with_no_data=('DOW',)):
         """
