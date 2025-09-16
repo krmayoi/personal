@@ -17,6 +17,9 @@ def main():
     fetcher.get_market_data(start=START_DATE, end=END_DATE)
     print(f"✅ Got returns for {len(fetcher.data)} tickers")
 
+    # 💾 Save historical market data for .qmd use
+    fetcher.save_market_data(save_path="data/raw/djia_prices.pkl")
+
     # Optional: Preview one ticker's returns
     if fetcher.data:
         first_ticker = list(fetcher.data.keys())[0]
