@@ -1,4 +1,6 @@
 import requests
+import os
+import json
 from bs4 import BeautifulSoup
 from nltk.sentiment import SentimentIntensityAnalyzer
 import yfinance as yf
@@ -28,6 +30,18 @@ class DataFetcher:
 
         self.tickers = sorted(tickers)
         return self
+    
+    def save_tickers(self, save_dir="data/raw", filename="djia_tickers.json"):
+        """Save the current list of DJIA tickers to a file in save_dir."""
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, filename)
+
+        try:
+            with open(save_path, "w", encoding="utf-8") as f:
+                json.dump(self.tickers, f, indent=2)
+            print(f"✅ Saved {len(self.tickers)} tickers to {save_path}")
+        except Exception as e:
+            print(f"⚠️ Error saving tickers: {e}")
 
     def get_market_data(self, start=START_DATE, end=END_DATE):
         import numpy as np
