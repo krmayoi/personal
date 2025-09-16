@@ -121,7 +121,7 @@ The next phase will extend this into **machine learning models** to predict mark
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/yourusername/dowjones_nlp_pipeline.git
+   git clone https://github.com/krmayoi/dowjones_nlp_pipeline.git
    cd dowjones_nlp_pipeline
    
 2. Install dependencies
